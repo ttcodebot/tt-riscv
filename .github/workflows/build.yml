@@ -92,8 +92,24 @@ jobs:
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v7
+      # The port's Docker image (Ubuntu + RISC-V GCC + picolibc) only changes with the kianRiscV pin
+      # or patches; caching it saves ~2-12 min of package downloads per run.
+      - name: Restore the Zephyr Docker image
+        id: zephyr-image
+        uses: actions/cache/restore@v6
+        with:
+          path: build/zephyr-docker-image.tar
+          key: zephyr-docker-${{ hashFiles('pins.env', 'patches/kianRiscV/**') }}
       - name: Build (Docker)
+        env:
+          DOCKER_IMAGE_TAR: ${{ github.workspace }}/build/zephyr-docker-image.tar
         run: scripts/build-zephyr.sh out/kianv-zephyr
+      - name: Save the Zephyr Docker image
+        if: steps.zephyr-image.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v6
+        with:
+          path: build/zephyr-docker-image.tar
+          key: zephyr-docker-${{ hashFiles('pins.env', 'patches/kianRiscV/**') }}
       - uses: actions/upload-artifact@v7
         with:
           name: kianv-zephyr
