@@ -122,6 +122,11 @@ def kianv_regfile(freq=30_000_000, baud=115200, ui=0, char_ms=80):
     console(KIANV_REGFILE, freq, baud=baud, ui=ui, char_ms=char_ms)
 
 
+def kianv_rv32e(freq=25_000_000, baud=115200, char_ms=5):
+    """KianV RV32E bare-metal SoC (tt07 #588). It has a receive FIFO, so input can go faster."""
+    console("tt_um_kianv_bare_metal", freq, baud=baud, char_ms=char_ms)
+
+
 def kianv_memtest(thorough=False, freq=30_000_000):
     """KianV memtest: ui_in[1] selects the thorough mode (sampled once at reset)."""
     console(KIANV, freq, ui=2 if thorough else 0)

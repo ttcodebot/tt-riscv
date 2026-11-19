@@ -11,6 +11,7 @@ so the images overlap:
 | KianV device tree                      | 0x180000                      |           |
 | KianV Linux Image                      | 0x200000 - about 0x540000     |           |
 | KianV Zephyr + MicroPython dual-boot   | 0x100000 - 0x3B1000           | 0x100000  |
+| KianV RV32E bare-metal programs        | 0x100000 - size               | 0x100000  |
 
 Rules:
 
