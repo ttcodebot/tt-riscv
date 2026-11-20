@@ -120,6 +120,16 @@ jobs:
       - uses: actions/checkout@v7
       - name: Build the Rust example
         run: scripts/build-tinyqv-rust.sh out/tinyqv-rust
+      - name: Toolchain URL for the cache key
+        id: tqv
+        run: . ./pins.env && echo "toolchain=$(basename "$TINYQV_TOOLCHAIN_URL")" >> "$GITHUB_OUTPUT"
+      # The tinyQV toolchain download is about 1 GB.
+      - uses: actions/cache@v6
+        with:
+          path: build/${{ steps.tqv.outputs.toolchain }}
+          key: ${{ steps.tqv.outputs.toolchain }}
+      - name: Build Breakout (C)
+        run: scripts/build-tinyqv-breakout.sh out/tinyqv-breakout
       - name: Fetch TinyQV MicroPython
         run: scripts/fetch-tinyqv-micropython.sh out/tinyqv-micropython
       - uses: actions/upload-artifact@v7
@@ -162,6 +172,7 @@ jobs:
           cp $a/kianv-zephyr/VERSIONS.txt                      rel/kianv-zephyr-VERSIONS.txt
           cp $a/kianv-memtest/memtest.bin                      rel/kianv-memtest.bin
           cp $a/tinyqv/tinyqv-rust/tinyqv-hello.bin            rel/tinyqv-rust-hello.bin
+          cp $a/tinyqv/tinyqv-breakout/tinyqv-breakout.bin     rel/tinyqv-breakout.bin
           cp $a/tinyqv/tinyqv-micropython/*.bin                rel/tinyqv-micropython.bin
           (cd rel && sha256sum * > SHA256SUMS && cat SHA256SUMS)
       - name: Write release notes
